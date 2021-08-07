@@ -3,10 +3,7 @@ package blog.rpc.tranport.imp;
 import blog.rpc.listener.RpcListener;
 import blog.rpc.tranport.RpcHandle;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -33,6 +30,7 @@ public class NettyTransport {
         bootstrap = new ServerBootstrap();
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.TCP_NODELAY,true)
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer() {
                     protected void initChannel(Channel channel) throws Exception {

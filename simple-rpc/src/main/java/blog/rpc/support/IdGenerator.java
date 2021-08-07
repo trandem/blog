@@ -3,22 +3,16 @@ package blog.rpc.support;
 import java.time.Instant;
 
 public class IdGenerator {
-    private static final int UNUSED_BITS = 1; // Sign bit, Unused (always set to 0)
-    private static final int EPOCH_BITS = 41;
+
     private static final int NODE_ID_BITS = 10;
     private static final int SEQUENCE_BITS = 12;
 
-    private static final int maxNodeId = (int) (Math.pow(2, NODE_ID_BITS) - 1);
     private static final int maxSequence = (int) (Math.pow(2, SEQUENCE_BITS) - 1);
 
-
-    // Custom Epoch (January 1, 2015 Midnight UTC = 2015-01-01T00:00:00Z)
     private static final long CUSTOM_EPOCH = 1420070400000L;
 
-    private final int nodeId = 1;
-
-    private volatile long lastTimestamp = -1L;
-    private volatile long sequence = 0L;
+    private long lastTimestamp = -1L;
+    private long sequence = 0L;
 
     public static IdGenerator instance = new IdGenerator();
 
@@ -43,6 +37,7 @@ public class IdGenerator {
         lastTimestamp = currentTimestamp;
 
         long id = currentTimestamp << (NODE_ID_BITS + SEQUENCE_BITS);
+        int nodeId = 1;
         id |= (nodeId << SEQUENCE_BITS);
         id |= sequence;
         return id;
