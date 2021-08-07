@@ -53,7 +53,6 @@ public class SimpleRpcClient implements SimpleService, RpcListener<ByteBuf> {
             // Wait until the connection is closed.
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
         }
     }
 
@@ -130,7 +129,7 @@ public class SimpleRpcClient implements SimpleService, RpcListener<ByteBuf> {
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg)  {
             if (listener != null) {
                 listener.onMessage(msg);
             }
@@ -140,7 +139,7 @@ public class SimpleRpcClient implements SimpleService, RpcListener<ByteBuf> {
         }
     }
 
-    public static void main(String[] args) throws NoSuchMethodException {
+    public static void main(String[] args) {
         SimpleRpcClient client = new SimpleRpcClient("localhost", 9999);
         System.out.println(client.add(1, 3));
         System.out.println(client.getUser().getName());
