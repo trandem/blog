@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static blog.serilize.impl.DMarshallerIml.cast;
 
-@Marshaller(name = "test.TestObject",number = 5)
+@Marshaller(name = String.class,number = 5)
 public class StringSerialize implements DSerialize<String> {
 
 

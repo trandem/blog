@@ -5,6 +5,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Marshaller {
-    String name() default "";
+    Class<?> name() default Object.class;
     int number() default -1;
 }

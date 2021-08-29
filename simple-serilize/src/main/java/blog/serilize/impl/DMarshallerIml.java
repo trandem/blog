@@ -9,6 +9,7 @@ import blog.serilize.base.anotation.Marshaller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class DMarshallerIml implements DMarshaller {
     private final Map<String , DSerialize<?>> register;
@@ -20,6 +21,7 @@ public class DMarshallerIml implements DMarshaller {
     }
 
     public void register(DSerialize<?> x) {
+
         register.put(x.getClass().getName(), x);
         Marshaller ano = x.getClass().getAnnotation(Marshaller.class);
         if (ano == null) {

@@ -1,28 +1,28 @@
 package blog.serilize;
 
 import blog.proto.Blog;
-import blog.serilize.base.DInput;
+import blog.serilize.base.DMarshaller;
 import blog.serilize.base.DOutput;
-import blog.serilize.impl.DByteArrayInput;
-import blog.serilize.impl.DByteArrayOutput;
-import com.google.protobuf.InvalidProtocolBufferException;
+import blog.serilize.impl.DByteBufferOutput;
+import blog.serilize.impl.DMarshallerIml;
+import blog.serilize.test.User;
 
 public class Test {
-    public static void main(String[] args) throws InvalidProtocolBufferException {
-//        Blog.SimpleObject data = Blog.SimpleObject.newBuilder()
-//                .setCount(-10)
-//                .setName("ânhdem976")
-//                .build();
-//
-//
-//        Blog.SimpleObject x=  Blog.SimpleObject.parseFrom(data.toByteArray());
+    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
+        Blog.SimpleObject data = Blog.SimpleObject.newBuilder()
+                .setCount(10)
+                .setName("ânhdem976")
+                .build();
 
-        DOutput output = new DByteArrayOutput(1024);
-        output.writeIntOptimise(1);
-        output.writeString("ấ");
+        System.out.println(data.toByteArray().length);
 
-        DInput input = new DByteArrayInput(output.toArrayBytes());
-        System.out.println(input.readIntPositiveOptimise());
-        System.out.println(input.readString());
+        DMarshaller marshaller = new DMarshallerIml();
+        marshaller.register(User.class);
+
+        User demtv = new User("ânhdem976",10);
+        DOutput output = new DByteBufferOutput(10);
+        marshaller.write(demtv, output);
+
+        System.out.println(output.toArrayBytes().length);
     }
 }

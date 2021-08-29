@@ -14,7 +14,7 @@ import blog.serilize.impl.DMarshallerIml;
 import java.util.HashMap;
 import java.util.Map;
 
-@Marshaller(name = "test.TestObject",number = 1)
+@Marshaller(name = TestObject.class,number = 1)
 public class TestObject implements DSerialize<TestObject> {
     private String userName;
     private int age;
@@ -82,7 +82,6 @@ public class TestObject implements DSerialize<TestObject> {
         marshaller.register(StringSerialize.class);
 
 
-
         User demtv = new User("demtv");
         Map<String ,User> map = new HashMap<>();
         map.put(demtv.getName(), demtv);
@@ -96,10 +95,6 @@ public class TestObject implements DSerialize<TestObject> {
         marshaller.write(data, output);
         TestMapData y = marshaller.read(new DByteBufferInput(output.toArrayBytes()));
         System.out.println(y.getData().get("demtv").getName());
-
-
-
-
 
 
 //        Kryo kryo = new Kryo();

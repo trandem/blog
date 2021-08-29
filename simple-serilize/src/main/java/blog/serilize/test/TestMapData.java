@@ -8,9 +8,9 @@ import blog.serilize.base.anotation.Marshaller;
 
 import java.util.Map;
 
-@Marshaller(name = "test.TestObject",number = 3)
+@Marshaller(name = TestMapData.class, number = 3)
 public class TestMapData implements DSerialize<TestMapData> {
-    private Map<String , User> data;
+    private Map<String, User> data;
 
 
     public Map<String, User> getData() {
@@ -23,7 +23,7 @@ public class TestMapData implements DSerialize<TestMapData> {
 
     @Override
     public void write(DMarshaller marshaller, DOutput output, TestMapData data) {
-        marshaller.write(data.getData(),output);
+        marshaller.write(data.getData(), output);
     }
 
     @Override

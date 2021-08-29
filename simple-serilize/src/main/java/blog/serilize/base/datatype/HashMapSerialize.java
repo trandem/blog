@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static blog.serilize.impl.DMarshallerIml.cast;
 
-@Marshaller(name = "test.TestObject",number = 4)
+@Marshaller(name = HashMap.class,number = 4)
 public class HashMapSerialize<K, V> implements DSerialize<Map<K, V>> {
 
 

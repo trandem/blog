@@ -55,13 +55,29 @@ public class CopyKyro {
 
     public static void main(String[] args) throws IOException {
 //        Test test = new Test();
-////        test.writeInt(-10);
-////        test.position =0;
-////        System.out.println(test.readInt());
-//        ByteBuffer x = ByteBuffer.allocate(10).order(ByteOrder.LITTLE_ENDIAN);
-////        x.putChar('c');
-////        int y = test.readIntLITTLE(x.array());
-////        System.out.println(y);
+//        test.writeInt(-10);
+//        test.position =0;
+//        System.out.println(test.readInt());
+        int number = -32;
+
+        ByteBuffer x = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+        x.putInt(number);
+        System.out.println("LITTLE_ENDIAN");
+        for (int i = 0 ; i < 4 ; i++){
+            System.out.printf("%d ", x.array()[i]);
+        }
+        System.out.println();
+        System.out.println("BIG_ENDIAN");
+        ByteBuffer y = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+        y.putInt(number);
+        for (int i = 0 ; i < 4 ; i++){
+            System.out.printf("%d ", y.array()[i]);
+
+        }
+
+//        x.putChar('c');
+//        int y = test.readIntLITTLE(x.array());
+//        System.out.println(y);
 //        System.out.println(test.readChar    (x.array()));
 //
 //        Socket s=new Socket("localhost",9999);
@@ -73,7 +89,7 @@ public class CopyKyro {
 //        dout.flush();
 //        dout.close();
 //        s.close();
-
+//
 //        Output output = new ByteBufferOutput(1024);
 //        output.writeInt(-10,true);
 //
