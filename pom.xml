@@ -11,6 +11,7 @@
     <modules>
         <module>simple-rpc</module>
         <module>common</module>
+        <module>simple-serilize</module>
     </modules>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

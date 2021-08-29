@@ -8,10 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="simple-rpc" />
         <module name="fast-thread-local" />
+        <module name="simple-serilize" />
+        <module name="common" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="common" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>
