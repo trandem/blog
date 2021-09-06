@@ -7,8 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="simple-rpc" />
+        <module name="simple-serialize" />
         <module name="fast-thread-local" />
-        <module name="simple-serilize" />
         <module name="common" />
       </profile>
     </annotationProcessing>

@@ -6,14 +6,8 @@ import blog.serilize.base.DOutput;
 import blog.serilize.base.DSerialize;
 import blog.serilize.base.anotation.Marshaller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static blog.serilize.impl.DMarshallerIml.cast;
-
 @Marshaller(name = String.class,number = 5)
 public class StringSerialize implements DSerialize<String> {
-
 
     @Override
     public void write(DMarshaller marshaller, DOutput output, String data) {

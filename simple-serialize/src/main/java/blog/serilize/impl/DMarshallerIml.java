@@ -9,7 +9,9 @@ import blog.serilize.base.anotation.Marshaller;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import static blog.common.Utils.cast;
+
 
 public class DMarshallerIml implements DMarshaller {
     private final Map<String , DSerialize<?>> register;
@@ -60,10 +62,6 @@ public class DMarshallerIml implements DMarshaller {
         } else {
             throw new RuntimeException("object need to register first " + className);
         }
-    }
-
-    public static <T> T cast(Object x) {
-        return (T) x;
     }
 
     public <T> T read(DInput input) {

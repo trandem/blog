@@ -8,8 +8,7 @@ import blog.serilize.base.anotation.Marshaller;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static blog.serilize.impl.DMarshallerIml.cast;
+import static blog.common.Utils.cast;
 
 @Marshaller(name = HashMap.class,number = 4)
 public class HashMapSerialize<K, V> implements DSerialize<Map<K, V>> {
