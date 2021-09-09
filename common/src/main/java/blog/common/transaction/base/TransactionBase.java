@@ -2,6 +2,7 @@ package blog.common.transaction.base;
 
 public interface TransactionBase {
     void commit();
+    void begin();
 
     void rollback();
 

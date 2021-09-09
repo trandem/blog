@@ -26,12 +26,17 @@ public class TransactionActionImpl implements TransactionBase {
     }
 
     @Override
+    public void begin() {
+        this.cookies.clear();
+    }
+
+    @Override
     public void rollback() {
         try {
             for (Map.Entry<TransactionElement, Object> entry : cookies.entrySet()) {
                 entry.getKey().onRollback(entry.getValue());
             }
-        }finally {
+        } finally {
             cookies.clear();
         }
     }
