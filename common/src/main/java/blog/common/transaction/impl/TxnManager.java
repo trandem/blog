@@ -1,16 +1,17 @@
 package blog.common.transaction.impl;
 
 import blog.common.concurrent.FastThreadLocal;
-import blog.common.transaction.base.TransactionBase;
+import blog.common.transaction.base.Txn;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
-public class TransactionManager {
+public class TxnManager {
 
     public <T> T execute(Supplier<T> supplier) {
         TransactionInfo info = createTransaction();
-        TransactionBase transactionBase = info.current;
+        Txn transactionBase = info.current;
 
         try {
             transactionBase.begin();
@@ -29,7 +30,7 @@ public class TransactionManager {
     }
 
     private TransactionInfo createTransaction() {
-        TransactionBase base = new TransactionActionImpl();
+        Txn base = new TxnImpl();
         TransactionInfo prev = STX.get();
         TransactionInfo next = new TransactionInfo(base, prev);
         STX.set(next);
@@ -37,19 +38,19 @@ public class TransactionManager {
     }
 
     static class TransactionInfo {
-        private TransactionBase current;
+        private Txn current;
         private TransactionInfo previous;
 
-        public TransactionInfo(TransactionBase current, TransactionInfo info) {
+        public TransactionInfo(Txn current, TransactionInfo info) {
             this.current = current;
             this.previous = info;
         }
 
-        public TransactionBase getCurrent() {
+        public Txn getCurrent() {
             return current;
         }
 
-        public void setCurrent(TransactionBase current) {
+        public void setCurrent(Txn current) {
             this.current = current;
         }
 
@@ -64,25 +65,25 @@ public class TransactionManager {
 
     private static final FastThreadLocal<TransactionInfo> STX = new FastThreadLocal<>();
 
-    public static final TransactionBase current() {
+    public static final Txn current() {
         if (STX.get() == null) return null;
         return STX.get().current;
     }
 
     public static void main(String[] args) {
-        TransactionManager manager = new TransactionManager();
-        manager.execute(()->{
-            System.out.println(STX.get());
-            manager.execute(()->{
-                System.out.println(STX.get());
-                return -1;
-            });
-            return 1;
-        });
-        System.out.println(STX.get());
-
-        HashMap<Integer,Long> x = new HashMap<>();
-        HashMap<Integer,Long> y = new HashMap<>(x);
-
+//        TxnManager manager = new TxnManager();
+//        manager.execute(()->{
+//            System.out.println(STX.get());
+//            manager.execute(()->{
+//                System.out.println(STX.get());
+//                return -1;
+//            });
+//            return 1;
+//        });
+//        System.out.println(STX.get());
+//
+//        HashMap<Integer,Long> x = new HashMap<>();
+//        HashMap<Integer,Long> y = new HashMap<>(x);
+//
     }
 }

@@ -2,15 +2,15 @@ package blog.common.transaction.impl;
 
 import blog.common.Utils;
 import blog.common.transaction.base.TransactionElement;
-import blog.common.transaction.base.TransactionBase;
+import blog.common.transaction.base.Txn;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TransactionActionImpl implements TransactionBase {
+public class TxnImpl implements Txn {
     private final Map<TransactionElement, Object> cookies;
 
-    public TransactionActionImpl() {
+    public TxnImpl() {
         this.cookies = new HashMap<>(8);
     }
 

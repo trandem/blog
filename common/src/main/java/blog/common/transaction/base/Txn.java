@@ -1,6 +1,6 @@
 package blog.common.transaction.base;
 
-public interface TransactionBase {
+public interface Txn {
     void commit();
     void begin();
 
