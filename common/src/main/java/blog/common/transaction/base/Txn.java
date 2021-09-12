@@ -6,10 +6,10 @@ public interface Txn {
 
     void rollback();
 
-    <T> T get(TransactionElement key);
+    <T> T get(TxnElement key);
 
-    void put(TransactionElement element, Object value);
+    void put(TxnElement element, Object value);
 
-    boolean contain (TransactionElement element);
+    boolean contain (TxnElement element);
 
 }

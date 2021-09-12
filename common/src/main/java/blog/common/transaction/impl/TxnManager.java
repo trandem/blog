@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class TxnManager {
 
-    public <T> T execute(Supplier<T> supplier) {
+    public <T> T executeTransaction(Supplier<T> supplier) {
         TransactionInfo info = createTransaction();
         Txn transactionBase = info.current;
 
@@ -65,25 +65,9 @@ public class TxnManager {
 
     private static final FastThreadLocal<TransactionInfo> STX = new FastThreadLocal<>();
 
-    public static final Txn current() {
+    public static Txn current() {
         if (STX.get() == null) return null;
         return STX.get().current;
     }
-
-    public static void main(String[] args) {
-//        TxnManager manager = new TxnManager();
-//        manager.execute(()->{
-//            System.out.println(STX.get());
-//            manager.execute(()->{
-//                System.out.println(STX.get());
-//                return -1;
-//            });
-//            return 1;
-//        });
-//        System.out.println(STX.get());
-//
-//        HashMap<Integer,Long> x = new HashMap<>();
-//        HashMap<Integer,Long> y = new HashMap<>(x);
-//
-    }
+    
 }

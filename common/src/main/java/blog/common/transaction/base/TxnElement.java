@@ -1,6 +1,6 @@
 package blog.common.transaction.base;
 
-public interface TransactionElement {
+public interface TxnElement {
 
     void onCommit(Object data);
 

@@ -38,14 +38,19 @@ public class TestTransaction {
 
         TxnManager manager = new TxnManager();
 
-        manager.execute(() -> {
+        manager.executeTransaction(() -> {
             test.buySuccess("demtv","iphone");
             test.buySuccess("demtv","ipad");
             test.buySuccess("maitv","ipad");
+            manager.executeTransaction(()->{
+                test.buySuccess("maitv","ipad");
+                test.buyFail();
+                return null;
+            });
             return null;
         });
 
-        manager.execute(() -> {
+        manager.executeTransaction(() -> {
             test.buySuccess("maipm","iphone");
             test.buyFail();
             return null;

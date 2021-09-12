@@ -2,14 +2,14 @@ package blog.common.transaction.element;
 
 import blog.common.Utils;
 import blog.common.transaction.base.TnxError;
-import blog.common.transaction.base.TransactionElement;
+import blog.common.transaction.base.TxnElement;
 import blog.common.transaction.base.Txn;
 import blog.common.transaction.impl.TxnManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TxnHashMap<K, V> implements TransactionElement {
+public class TxnHashMap<K, V> implements TxnElement {
     private Map<K, V> value;
 
     public TxnHashMap() {
