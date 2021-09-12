@@ -10,76 +10,65 @@ tìm được một cách hay ho có thể sử dụng lại thì tôi quết đ
 Ta sẽ chú ý ví dụ lưu các sản phẩm khách hàng mua thành công trên RAM sau :
 ```java
 
-import blog.common.concurrent.FastThreadLocal;
-import blog.common.transaction.base.Txn;
+import blog.common.transaction.element.TxnHashMap;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TxnManager {
 
-    public <T> T executeTransaction(Supplier<T> supplier) {
-        TransactionInfo info = createTransaction();
-        Txn transactionBase = info.current;
+public class TestTransaction {
+    private TxnHashMap<String, List<String>> userData;
 
-        try {
-            transactionBase.begin();
+    public TestTransaction() {
+        this.userData = new TxnHashMap<>();
+    }
 
-            T r = supplier.get();
+    private void buySuccess(String userName, String productName) {
+        if (!userData.contain(userName)) {
+            userData.put(userName, new ArrayList<>());
+        }
+        userData.get(userName).add(productName);
+    }
 
-            transactionBase.commit();
-            return r;
+    private void buyFail() {
+        throw new RuntimeException(" something is error");
+    }
 
-        } catch (Exception e) {
-            transactionBase.rollback();
+    public TxnHashMap<String, List<String>> getUserData() {
+        return userData;
+    }
+
+    public void setUserData(TxnHashMap<String, List<String>> userData) {
+        this.userData = userData;
+    }
+
+    public static void main(String[] args) {
+
+        TestTransaction test = new TestTransaction();
+
+        TxnManager manager = new TxnManager();
+
+        manager.executeTransaction(() -> {
+            test.buySuccess("demtv","iphone");
+            test.buySuccess("demtv","ipad");
+            test.buySuccess("maitv","ipad");
+            manager.executeTransaction(()->{
+                test.buySuccess("maitv","ipad");
+                test.buyFail();
+                return null;
+            });
             return null;
-        } finally {
-            STX.set(info.getPrevious());
-        }
+        });
+
+        manager.executeTransaction(() -> {
+            test.buySuccess("maipm","iphone");
+            test.buyFail();
+            return null;
+        });
+
+        System.out.println(test.getUserData().getValue());
     }
 
-    private TransactionInfo createTransaction() {
-        Txn base = new TxnImpl();
-        TransactionInfo prev = STX.get();
-        TransactionInfo next = new TransactionInfo(base, prev);
-        STX.set(next);
-        return next;
-    }
-
-    static class TransactionInfo {
-        private Txn current;
-        private TransactionInfo previous;
-
-        public TransactionInfo(Txn current, TransactionInfo info) {
-            this.current = current;
-            this.previous = info;
-        }
-
-        public Txn getCurrent() {
-            return current;
-        }
-
-        public void setCurrent(Txn current) {
-            this.current = current;
-        }
-
-        public TransactionInfo getPrevious() {
-            return previous;
-        }
-
-        public void setPrevious(TransactionInfo previous) {
-            this.previous = previous;
-        }
-    }
-
-    private static final FastThreadLocal<TransactionInfo> STX = new FastThreadLocal<>();
-
-    public static Txn current() {
-        if (STX.get() == null) return null;
-        return STX.get().current;
-    }
-    
 }
 ```
 Tại đây tôi sẽ lưu các sản phẩm khách hàng mua thành công vào một `TxnHashMap` là implement của một **HashMap**
