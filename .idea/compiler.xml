@@ -11,6 +11,7 @@
         <module name="simple-serilaize" />
         <module name="fast-thread-local" />
         <module name="common" />
+        <module name="test" />
       </profile>
     </annotationProcessing>
   </component>
