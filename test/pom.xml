@@ -37,6 +37,14 @@
             <artifactId>grpc-stub</artifactId>
             <version>${grpc.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+
+
     </dependencies>
 
 </project>
