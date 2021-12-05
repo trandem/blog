@@ -1,0 +1,11 @@
+server:
+  port: 8082
+  http2:
+    enabled: true
+  ssl:
+    key-store-type: PKCS12
+    key-store: classpath:localhost.p12
+    key-store-password: demtv
+    key-alias: localhost
+
+
