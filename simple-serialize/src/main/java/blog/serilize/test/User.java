@@ -5,9 +5,7 @@ import blog.serilize.base.DInput;
 import blog.serilize.base.DMarshaller;
 import blog.serilize.base.DOutput;
 import blog.serilize.base.DSerialize;
-import blog.serilize.base.anotation.Marshaller;
 
-@Marshaller(name = User.class,number = 2)
 public class User implements DSerialize<User> {
     private String name;
     private int age;

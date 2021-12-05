@@ -23,6 +23,12 @@ public class DByteBufferOutput implements DOutput {
         buffer.putInt(data);
     }
 
+    @Override
+    public DOutput clear() {
+        buffer.clear();
+        return this;
+    }
+
     public void writeLong(long data) {
         require(8);
         buffer.putLong(data);

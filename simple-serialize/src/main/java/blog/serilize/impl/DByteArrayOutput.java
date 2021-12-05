@@ -7,10 +7,17 @@ public class DByteArrayOutput implements DOutput {
 
     private byte[] buffer;
     private int position;
+    private final int max;
 
-    public DByteArrayOutput(int size) {
-        this.buffer = new byte[size];
+    public DByteArrayOutput(int min, int max) {
+        this.max = max;
+        if (min > max) throw new RuntimeException("min > max");
         this.position = 0;
+        this.buffer = new byte[min];
+    }
+
+    public DByteArrayOutput() {
+        this(1024, 1024);
     }
 
     @Override
@@ -62,12 +69,21 @@ public class DByteArrayOutput implements DOutput {
         return output;
     }
 
+    public DByteArrayOutput clear() {
+        this.position = (0);
+        return this;
+    }
+
+
     private void require(final int n) {
+        if (n > max) throw new RuntimeException("buffer over flow");
+
         if (this.buffer.length - position < n) {
             int newSize = buffer.length * 2;
             while (newSize - position < n) {
                 newSize *= 2;
             }
+            if (newSize > max) throw new RuntimeException("buffer over flow");
             byte[] temp = new byte[newSize];
             System.arraycopy(buffer, 0, temp, 0, buffer.length);
             this.buffer = temp;

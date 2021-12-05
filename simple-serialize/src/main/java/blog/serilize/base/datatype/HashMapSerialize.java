@@ -4,13 +4,12 @@ import blog.serilize.base.DInput;
 import blog.serilize.base.DMarshaller;
 import blog.serilize.base.DOutput;
 import blog.serilize.base.DSerialize;
-import blog.serilize.base.anotation.Marshaller;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import static blog.common.Utils.cast;
 
-@Marshaller(name = HashMap.class,number = 4)
 public class HashMapSerialize<K, V> implements DSerialize<Map<K, V>> {
 
 

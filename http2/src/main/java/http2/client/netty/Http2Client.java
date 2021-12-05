@@ -18,6 +18,7 @@ import io.netty.util.AsciiString;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import static io.netty.handler.codec.http.HttpMethod.GET;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -71,9 +72,12 @@ public final class Http2Client {
             Channel channel = b.connect().syncUninterruptibly().channel();
             System.out.println("Connected to [" + HOST + ':' + PORT + ']');
 
+            initializer.getSettingsHandler().awaitSettings(10, TimeUnit.SECONDS);
+
+            int maxconcurent = initializer.getSettingsHandler().getMaxConcurrent().intValue();
             // Wait for the HTTP/2 upgrade to occur.
             CountDownLatch countDownLatch = new CountDownLatch(180);
-            Semaphore semaphore = new Semaphore(100);
+            Semaphore semaphore = new Semaphore(maxconcurent);
             HttpResponseHandler responseHandler = initializer.responseHandler();
             responseHandler.setSemaphore(semaphore);
             responseHandler.setCountDownLatch(countDownLatch);
@@ -84,7 +88,7 @@ public final class Http2Client {
             System.err.println("Sending request(s)...");
             long start = System.currentTimeMillis();
 
-            for (int i = 0; i < 10000; i++) {
+            for (int i = 0; i < 180; i++) {
                 semaphore.acquire();
                 FullHttpRequest fullHttpRequest = new DefaultFullHttpRequest(HTTP_1_1, GET, URL, Unpooled.EMPTY_BUFFER);
                 fullHttpRequest.headers().add(HttpConversionUtil.ExtensionHeaderNames.SCHEME.text(), HttpScheme.HTTPS.name());

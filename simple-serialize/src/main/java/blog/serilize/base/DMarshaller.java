@@ -2,11 +2,13 @@ package blog.serilize.base;
 
 public interface DMarshaller {
 
-    void register(DSerialize<?> x);
-
-    void register(Class<?> x) throws IllegalAccessException, InstantiationException;
-
-    void write(Object x,DOutput output);
+    void write(Object data, DOutput output);
 
     <T> T read(DInput input);
+
+    <T extends DMarshallable> void register(Class<T> c, DInstance<T> ins);
+
+    <T extends DMarshallable> void register(DInstance<T> ins);
+
+    void register(DSerialize<?> serialize);
 }

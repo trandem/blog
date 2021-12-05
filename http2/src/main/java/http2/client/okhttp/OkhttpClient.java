@@ -24,7 +24,7 @@ public class OkhttpClient {
 
         Response r1 = client.newCall(request).execute();
         System.out.println(r1.protocol());
-        client.dispatcher().setMaxRequestsPerHost(20);
+        client.dispatcher().setMaxRequestsPerHost(100);
         CountDownLatch countDownLatch = new CountDownLatch(180);
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < 180; i++) {

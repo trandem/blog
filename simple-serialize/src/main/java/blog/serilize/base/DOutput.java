@@ -1,5 +1,7 @@
 package blog.serilize.base;
 
+import blog.serilize.impl.DByteArrayOutput;
+
 public interface DOutput {
     void writeInt(int data);
 
@@ -18,8 +20,7 @@ public interface DOutput {
         }
     }
 
-    void writeLong(long data);
-
+    public DOutput clear();
     default void writeLongOptimise(int value) {
         if (value < 0L) throw new IllegalArgumentException("pack long: " + value);
         long x;
@@ -34,6 +35,8 @@ public interface DOutput {
             }
         }
     }
+
+    void writeLong(long data);
 
     void writeShort(short data);
 

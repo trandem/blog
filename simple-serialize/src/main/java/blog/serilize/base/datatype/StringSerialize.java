@@ -4,9 +4,7 @@ import blog.serilize.base.DInput;
 import blog.serilize.base.DMarshaller;
 import blog.serilize.base.DOutput;
 import blog.serilize.base.DSerialize;
-import blog.serilize.base.anotation.Marshaller;
 
-@Marshaller(name = String.class,number = 5)
 public class StringSerialize implements DSerialize<String> {
 
     @Override

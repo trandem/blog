@@ -4,11 +4,9 @@ import blog.serilize.base.DInput;
 import blog.serilize.base.DMarshaller;
 import blog.serilize.base.DOutput;
 import blog.serilize.base.DSerialize;
-import blog.serilize.base.anotation.Marshaller;
 
 import java.util.Map;
 
-@Marshaller(name = TestMapData.class, number = 3)
 public class TestMapData implements DSerialize<TestMapData> {
     private Map<String, User> data;
 

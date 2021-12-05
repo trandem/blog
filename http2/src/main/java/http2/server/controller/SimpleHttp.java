@@ -17,6 +17,7 @@ public class SimpleHttp {
 
     @GetMapping("/test")
     public String test() throws InterruptedException {
+        Thread.sleep(100);
         System.out.println(System.currentTimeMillis());
         return "successful";
     }

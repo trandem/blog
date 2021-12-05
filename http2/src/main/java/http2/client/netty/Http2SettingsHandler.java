@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class Http2SettingsHandler extends SimpleChannelInboundHandler<Http2Settings> {
     private final ChannelPromise promise;
 
+    private Long maxConcurrent;
     /**
      * Create new instance
      *
@@ -53,11 +54,17 @@ public class Http2SettingsHandler extends SimpleChannelInboundHandler<Http2Setti
         }
     }
 
+
+    public Long getMaxConcurrent() {
+        return maxConcurrent;
+    }
+
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Http2Settings msg) throws Exception {
         promise.setSuccess();
-
-        System.out.println("max " +msg.maxConcurrentStreams());
+        maxConcurrent = msg.maxConcurrentStreams();
+        System.out.println("max " +maxConcurrent);
 
         // Only care about the first settings message
         ctx.pipeline().remove(this);
