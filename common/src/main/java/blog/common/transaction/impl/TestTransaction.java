@@ -1,5 +1,6 @@
 package blog.common.transaction.impl;
 
+import blog.common.transaction.base.DPropagation;
 import blog.common.transaction.element.TxnHashMap;
 
 import java.util.ArrayList;
@@ -39,22 +40,22 @@ public class TestTransaction {
         TxnManager manager = new TxnManager();
 
         manager.executeTransaction(() -> {
-            test.buySuccess("demtv","iphone");
-            test.buySuccess("demtv","ipad");
-            test.buySuccess("maitv","ipad");
-            manager.executeTransaction(()->{
-                test.buySuccess("maitv","ipad");
+            test.buySuccess("demtv", "iphone");
+            test.buySuccess("demtv", "ipad");
+            test.buySuccess("maitv", "ipad");
+            manager.executeTransaction(() -> {
+                test.buySuccess("maitv", "ipad");
                 test.buyFail();
                 return null;
-            });
+            }, DPropagation.SUPPORT);
             return null;
-        });
+        }, DPropagation.REQUIRES_NEW);
 
         manager.executeTransaction(() -> {
-            test.buySuccess("maipm","iphone");
+            test.buySuccess("maipm", "iphone");
             test.buyFail();
             return null;
-        });
+        }, DPropagation.REQUIRES_NEW);
 
         System.out.println(test.getUserData().getValue());
     }

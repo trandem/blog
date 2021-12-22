@@ -1,16 +1,17 @@
 package blog.common.transaction.impl;
 
 import blog.common.concurrent.FastThreadLocal;
+import blog.common.transaction.base.DPropagation;
 import blog.common.transaction.base.Txn;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class TxnManager {
 
-    public <T> T executeTransaction(Supplier<T> supplier) {
-        TransactionInfo info = createTransaction();
+    Txn.factory factory = new TxnImpl.RecycleFactory();
+
+    public <T> T executeTransaction(Supplier<T> supplier, DPropagation propagation) {
+        TransactionInfo info = createTransaction(propagation);
         Txn transactionBase = info.current;
 
         try {
@@ -29,10 +30,23 @@ public class TxnManager {
         }
     }
 
-    private TransactionInfo createTransaction() {
-        Txn base = new TxnImpl();
-        TransactionInfo prev = STX.get();
-        TransactionInfo next = new TransactionInfo(base, prev);
+    private TransactionInfo createTransaction(DPropagation propagation) {
+        TransactionInfo currentInfo = STX.get();
+        Txn txn = currentInfo == null ? null : currentInfo.current;
+        TransactionInfo next;
+        switch (propagation) {
+            case SUPPORT:
+                next = new TransactionInfo(txn, currentInfo);
+                break;
+            case REQUIRES_NEW:
+                next = new TransactionInfo(factory.create(), currentInfo);
+                break;
+            case REQUIRED:
+                next = new TransactionInfo(txn == null ? factory.create() : txn, currentInfo);
+                break;
+            default:
+                throw new RuntimeException("not support this DPropagation");
+        }
         STX.set(next);
         return next;
     }
@@ -69,5 +83,5 @@ public class TxnManager {
         if (STX.get() == null) return null;
         return STX.get().current;
     }
-    
+
 }

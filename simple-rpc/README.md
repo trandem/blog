@@ -159,8 +159,6 @@ Một **RPC server** cần phải lưu được lại các **method** của các
 này theo cơ chế RPC. Tôi sẽ sử dụng một **Map** để lưu trữ thông tin này và sử dụng **java reflection** để gọi method.
 ```java
 import blog.rpc.listener.RpcListener;
-import blog.rpc.service.SimpleService;
-import blog.rpc.service.impl.ServerImpl;
 import blog.rpc.support.*;
 import blog.rpc.tranport.imp.NettyTransport;
 import io.netty.buffer.ByteBuf;

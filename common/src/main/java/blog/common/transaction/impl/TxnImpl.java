@@ -5,7 +5,9 @@ import blog.common.transaction.base.TxnElement;
 import blog.common.transaction.base.Txn;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class TxnImpl implements Txn {
     private final Map<TxnElement, Object> cookies;
@@ -21,13 +23,18 @@ public class TxnImpl implements Txn {
                 entry.getKey().onCommit(entry.getValue());
             }
         } finally {
-            cookies.clear();
+            dispose();
         }
     }
 
     @Override
     public void begin() {
-        this.cookies.clear();
+//        this.cookies.clear();
+    }
+
+    @Override
+    public void dispose() {
+        cookies.clear();
     }
 
     @Override
@@ -37,7 +44,7 @@ public class TxnImpl implements Txn {
                 entry.getKey().onRollback(entry.getValue());
             }
         } finally {
-            cookies.clear();
+            dispose();
         }
     }
 
@@ -54,5 +61,35 @@ public class TxnImpl implements Txn {
     @Override
     public boolean contain(TxnElement element) {
         return cookies.containsKey(element);
+    }
+
+    private final static class RecycleTxn extends TxnImpl {
+        private Queue<RecycleTxn> cacheTxn;
+
+        public void setCacheTxn(Queue<RecycleTxn> cacheTxn) {
+            this.cacheTxn = cacheTxn;
+        }
+
+        @Override
+        public void dispose() {
+            super.dispose();
+            cacheTxn.add(this);
+        }
+    }
+
+
+    public static class RecycleFactory implements Txn.factory {
+
+        Queue<RecycleTxn> cacheTxn = new LinkedList<>();
+
+        @Override
+        public Txn create() {
+            RecycleTxn  txn = cacheTxn.poll();
+            if (txn ==null){
+                txn = new RecycleTxn();
+                txn.setCacheTxn(cacheTxn);
+            }
+            return txn;
+        }
     }
 }
