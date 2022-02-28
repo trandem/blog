@@ -96,39 +96,71 @@ có đầy đủ thông tin để **update** cache.
 Mình xin chia sẻ cách thiết kế của mình để anh em có thể hiểu và thay đổi nếu cần cho phù hợp với hệ thống. Mình sử dụng ngôn 
 ngữ **Java** là ngôn ngữ chính nên mọi người chịu khó đọc **Java** nhé.
 
-Trước khi vào thiết kế chi tiết kế **msg** cũng như các phần khác thì mình xin giới thiệu một **package** quan trọng của **Java**
-đó là **Java Reflection** nếu không có **package** này thì mình không thể xây dựng được **distributed cache**.
-
-#### Java Reflection
-Trình bày các phần mình sẽ dùng
-
 #### Chi tiết
-Biểu đồ flow
-Serialize
-Send
-DeSerialize
+Tại **ServerCache** ta có đoạn code như sau để thay đổi cache và notify event:
 
+```java
+public class ServerCache<K, V> extends AbstractCache<K, V> {
+    //...
+    public ServerCache(Store<K, V> store) {
+        super(store);
+    }
+    @Override
+    public void set(K k, V v) {
+        kvStore.set(k, v); // thay đổi nội dung cache
+        System.out.println("notify");
+        cluster.notify(new CacheEvent("cache", "onSet"), k, v, name); // build CacheEvent
+    }
+    
+    // Method sẽ được gọi khi nhận được Event từ Msg queue cho loại **set**
+    @MethodListener(topic = "cache", type = "onSet")
+    public void onSet(K k, V v, String name) {
+        System.out.println("receive on set " + v);
+        if (!name.equals(this.name)) return;
+        kvStore.onSet(k, v);
+    }
+    // ...
+}
+
+```
+Nhìn `code` mẫu trên thì ta thấy được cách hoạt động của hàm `set` thay đổi **cache** sau đó tạo một Event để gửi đến **msg queue** các **service** khác trong **cluster**
+cập nhật lại giá trị qua hàm `onSet`. Tương tự với các **method** remove, add  thì chúng ta cũng sẽ tạo ra 2 hàm:
+- Một hàm dùng để thay đổi cache
+- Một hàm dùng để nhận được thay đổi từ **msg queue**
+
+Công việc tiếp theo chúng ta cần xây dựng là :
+- Một **class** nắm vai trò nhận Event từ **msg queue** sau đó gọi đúng hàm **onSet**,**onAdd**,... Để làm được điều này thì không khó lắm,
+chúng ta chỉ cần lưu lại các **Object** cache hoặc là dùng **Java Reflection** lưu lại các **Method**. (1)
+- Cách thiết kế một **Event** đầy đủ thông tin về hàm được gọi cũng như **parameter** của hàm đó. (2)
+
+Phần (1) thì mình để các bạn tự làm theo ý mình, Tại đây mình sẽ chia sẻ một số cách tạo **Event** của phần (2).
+
+#### Serialize/DeSerialize
+Trước khi thiết kế được một **Event** cho các phương thức **cache** thì các bạn cần phải chọn được cách **Serialize/DeSerialize** data.
+
+Có 2 cách để giúp các bạn Serialize/DeSerialize đó là :
+- String : Dưới dạng **Json**
+- Array bytes : sử dụng các framework như [kryo](https://github.com/EsotericSoftware/kryo), [protobuf](https://developers.google.com/protocol-buffers),
+[thrift](https://thrift.apache.org/),... Mỗi loại này đều có ưu nhược điểm khác nhau nên tùy vào nhu cầu thì mọi người chọn một **framework**, hiện tại
+công ty mình đang tự xây dụng một cách **byte array serialize** dựa trên **Kryo** và **Unsafe** của **protobuf**. Mọi người đọc bài này 
+của mình để biết được cách **serialize** dưới dạng bytes nhé. https://demtv.hashnode.dev/how-to-serialize-data-in-java-like-protobuf
+
+Sau đây là cách thiết kế **Event** của mình dưới dạng **array byte**.
 
 ```java
 import blog.serialize.base.*;
 
 import java.util.Arrays;
 
-public class RemoteEvent implements DMarshallable {
+public class CacheEvent implements DMarshallable {
     private String topic; // topic in msg queue
     private String type;  // method name : set, del, add
     private int serverId; // id của server
+    private String cacheName; // cache config or cache product
     private byte[] args;  // nội dung của cache
    
 
     public RemoteEvent() {
-    }
-
-    public RemoteEvent(String topic, String type, int busId, byte[] args) {
-        this.topic = topic;
-        this.type = type;
-        this.busId = busId;
-        this.args = args;
     }
 
     //getter, setter and some method to serialize data
@@ -141,4 +173,57 @@ Giải thích các biến :
 - serverId : Đánh dấu **server** gửi msg
 - args : parameter của hàm được gọi (biến type). khi nhận được **client** cần deserialize thành object[] sau đó gửi thành
 
+Nếu các bạn muốn sử dụng dạng **json** deserialize thì tham khảo cách tương tự sau.
+```java
+import blog.serialize.base.*;
 
+import java.util.Arrays;
+
+public class CacheEvent implements DMarshallable {
+    private String topic; // topic in msg queue
+    private String type;  // method name : set, del, add
+    private int serverId; // id của server
+    private String cacheName; // cache config or cache product
+    private String args;  // nội dung của cache dưới dạng json.
+   
+
+    public RemoteEvent() {
+    }
+
+    //getter, setter and some method to serialize data
+
+}
+```
+
+Sau khi nhận được **Event** thì các bạn có thể **implement** theo giả **code** sau:
+
+```java
+public class EventController {
+//***
+public void onEvent(){
+    CacheEvent event = msg.getEvent();
+    String cacheName = event.getCacheName();
+    Cache<K,V> cache = cacheObject.get(cacheName);
+    switch (type){
+        case "del":
+            ParamDel param = deserialize(event.getArgs);
+            cache.onDel(param);
+            break;
+        case "set":
+            ParamSet param = deserialize(event.getArgs);
+            cache.onSet(param);
+            break;
+        default:
+            throw RuntimeException("not support");
+    }
+}
+//**
+}
+```
+
+Hy vọng qua hướng dẫn này thì các bạn có thể tự xây dụng cho mình một **distributed cache** mà không cần
+phải dùng đến **in-mem database** ,nếu không cần thiết thì thỉnh thoảng lập trình để tăng thêm kỹ năng cũng tốt để nhanh thành 
+senior hơn. Bài **blog** này là bài hướng dẫn nên mình đã **xóa** đi phần **code** implement trên **github** nếu bạn nào cần mì ăn liền thì
+liên hệ mình qua **facebook** nhé. 
+
+Nếu bài này hay thì mọi người tặng mình một **sao** trên **github** giúp mình có thêm động lực chia sẻ các bài khác nhé.
