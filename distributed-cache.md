@@ -30,6 +30,9 @@ admin thay đổi dữ liệu cache để turning hệ thống hoặc các job �
 Tại bài này mình sẽ chia sẽ cho các bạn kiến thức để xây dựng một **distributed cache** để nếu một ngày **in-mem database**
 của bạn không hoạt động như ý muốn thì coi đây là một giải pháp.
 
+Video demo **Distributed cache**
+[![distributed-cache](https://res.cloudinary.com/marcomontalbano/image/upload/v1646049712/video_to_markdown/images/youtube--65e1-RrAP58-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=65e1-RrAP58 "distributed-cache")
+
 ## system architecture
 
 Sau đây là cách mình thiết kế một **Distributed cache**
