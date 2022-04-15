@@ -126,6 +126,7 @@ thế.
 - Số tăng dần **sequence** : 12 bit . sẽ tạo ra 4096 ID khác nhau trong một millisecond. Nếu thời gian gọi tạo **ID** của service là trùng nhau ở mức **millisecond** thì  **sequence**
 sẽ có tác dụng tạo ra các **ID** tăng dần khác nhau. 
 
+
 ### ví dụ
 Lý thuyết là thế sau đây mình sẽ làm một ví dụ cho các bạn hiểu thêm về cách hoạt động của **snowflake**.
 
@@ -175,6 +176,7 @@ tùy chỉnh thuật toán **snowflake** theo ý.
 Việc lấy ra các thông tin này cung cấp cho chúng ta khả năng thực hiện các **validate** dữ liệu mà không cần phải vào **Database** lấy các thông tin này ra.
 Trên thực tế nếu tạo **ID** kiểu này mình thường lấy thời gian ra để thực hiện một số nghiệp vụ validate timeout,...
 
+### Tự tạo thuật toán sinh ID
 Việc nắm rõ cách hoạt động của một số **bitwise** cơ bản như (<<,>>,|,&) sẽ giúp các bạn không chỉ tạo **ID** theo thuật toán **snowflake** mà giúp các bạn tạo
 ra các loại **ID** có nhiều thông tin theo ý muốn của bạn. Ví dụ bạn muốn tạo một **customerID** chứa thông tin của quốc gia của **customer** đó thì bạn có thể tạo 
 một **customerID** dạng **integer** với 9 bits đầu để lưu mã quốc gia (vì một bit đầu tiên là bit dấu mà có hơn 200 quốc gia trên toàn thể giới) và 23 bit sau thì lưu **sequence**.
@@ -191,7 +193,32 @@ một **customerID** dạng **integer** với 9 bits đầu để lưu mã quố
     }
 ```
 
-## Một số hàm thông dụng khi sử dụng bitwise đối với các số
+### Một số ứng dụng khác khi dùng bitwise
+Các ứng dụng này sẽ là các cải thiện về hiệu năng của chương trình khi chạy nhưng nó chỉ cải thiện rất nhỏ vì các cách khác cũng đủ nhanh rồi.
+
+**Số chắn số lẻ**
+```
+// Returns true if n is even, else odd
+static boolean isEven(int n)
+{
+    // n&1 is 1, then odd, else even
+    return ((n & 1)!=1);
+}
+
+   // Returns true if n is even, else odd
+    static boolean isEven1(int n)
+    {
+ 
+        // n^1 is n+1, then even, else odd
+        if ((n ^ 1) == n + 1)
+            return true;
+        else
+            return false;
+    }
+```
+
+
+## Bitwise common number
 Tại hệ thống mình làm khi giao tiếp với phần mềm bên thứ 3 họ chỉ chấp nhận số lớn nhất là **int** nhưng **ID** của hệ thống mình là một số **long** vậy nên bọn mình đã
 sử dụng **bitwise** để tách 1 số **long** thành 2 số **int** và khi nhận về 2 số **int** sẽ ghép thành 1 số **long** để 2 hệ thống kết hợp với nhau tốt hơn. Do đó mình
 xin chia sẻ cho anh em các hàm common chuyên sử dụng để tách các số như vậy.
