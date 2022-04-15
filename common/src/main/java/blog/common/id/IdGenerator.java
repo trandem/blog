@@ -1,6 +1,7 @@
 package blog.common.id;
 
 import java.time.Instant;
+import java.util.Date;
 
 public class IdGenerator {
 
@@ -17,8 +18,14 @@ public class IdGenerator {
     public static IdGenerator instance = new IdGenerator();
 
     public synchronized long nextId() {
-        long currentTimestamp = timestamp();
+        long id = nextId(188);
+        return id;
+    }
 
+
+    private synchronized long nextId(int nodeId) {
+        long currentTimestamp = timestamp();
+        System.out.println(currentTimestamp);
         if (currentTimestamp < lastTimestamp) {
             throw new IllegalStateException("Invalid System Clock!");
         }
@@ -37,7 +44,7 @@ public class IdGenerator {
         lastTimestamp = currentTimestamp;
 
         long id = currentTimestamp << (NODE_ID_BITS + SEQUENCE_BITS);
-        int nodeId = 1;
+
         id |= (nodeId << SEQUENCE_BITS);
         id |= sequence;
         return id;
@@ -45,7 +52,9 @@ public class IdGenerator {
 
 
     private static long timestamp() {
-        return Instant.now().toEpochMilli() - CUSTOM_EPOCH;
+        long current = Instant.now().toEpochMilli();
+        System.out.println(current);
+        return current - CUSTOM_EPOCH;
     }
 
     private long waitNextMillis(long currentTimestamp) {
@@ -53,6 +62,59 @@ public class IdGenerator {
             currentTimestamp = timestamp();
         }
         return currentTimestamp;
+    }
+
+    public short getNodeIdById(long id) {
+        return (short) ((id >> SEQUENCE_BITS) & 0x2ff);
+    }
+
+    public long getTimestampById(long id) {
+        return (id >> 22) + CUSTOM_EPOCH;
+    }
+
+    public static int generateCustomerId(short nationalId, int sequence) {
+        int id = ((int) (nationalId & 0x1ff)) << 23;
+        id |= sequence & 0x007FFFFF;
+        return id;
+    }
+
+    public static short getNationalId(int customerId) {
+        short id = (short) ((short) (customerId >> 23) & 0x1ff);
+        return id;
+    }
+
+    public static void main(String[] args) {
+//        IdGenerator instance = IdGenerator.instance;
+//        System.out.println(instance.nextId());
+//        System.out.println(instance.getNodeIdById(964064791746355200L));
+//        System.out.println(instance.getNodeIdById(964064791750549504L));
+//        System.out.println(instance.getNodeIdById(964064791750549505L));
+//
+//        System.out.println(instance.getNodeIdById(964064976837525504L));
+//        System.out.println(instance.getNodeIdById(964064976837525505L));
+//        System.out.println(instance.getNodeIdById(964064976837525506L));
+//
+//        System.out.println(new Date(instance.getTimestampById(964064791746355200L)));
+//        System.out.println(new Date(instance.getTimestampById(964064791750549504L)));
+//        System.out.println(new Date(instance.getTimestampById(964064791750549505L)));
+//
+//        System.out.println(new Date(instance.getTimestampById(964064976837525504L)));
+//        System.out.println(new Date(instance.getTimestampById(964064976837525505L)));
+//        System.out.println(new Date(instance.getTimestampById(964064976837525506L)));
+        //System.out.println((18 << 10));
+
+
+        int id1 = generateCustomerId((short)111,300);
+        int id2 = generateCustomerId((short)112,300);
+        int id3 = generateCustomerId((short)113,300);
+        int id4 = generateCustomerId((short)114,300);
+        int id5 = generateCustomerId((short)115,300);
+
+        System.out.println(getNationalId(id1));
+        System.out.println(getNationalId(id2));
+        System.out.println(getNationalId(id3));
+        System.out.println(getNationalId(id4));
+        System.out.println(getNationalId(id5));
     }
 
 }
