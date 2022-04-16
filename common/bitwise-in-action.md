@@ -24,6 +24,9 @@ lại hầu như không sử dụng được.
 Trên thực tế với các phầm mềm mình đã làm và được nhận lại từ các chuyên gia thì họ thường sẽ không tạo **ID** kiểu vậy và sẽ sử dụng phép tính toán
 **Bitwise** để lưu thông tin. 
 
+_Trong bài blog này mình sẽ lấy ví dụ và giải thích chi tiết thuật toán snowflake để các bạn có thể hiểu được tầm quan trọng của phép toán **bitwise** cũng
+như mình sẽ cung cấp một số common function để làm việc với **bitwise**. Hy vọng sau bài này các bạn sẽ luyện tập và tạo được **ID** theo ý và chứa nhiều thông
+tin hơn một số tự tăng_.
 
 ## Tạo ID theo thuật toán snowflake
 
