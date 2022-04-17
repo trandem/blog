@@ -220,6 +220,35 @@ static boolean isEven(int n)
     }
 ```
 
+**Binary serialize**
+Một ứng dụng tuyệt vời khác của bitwise là dùng để **serialize** dữ liệu thành  **array byte** sau đó được ghi vào các file nhị phân 
+(các loại **database** đều dùng binary file), hoặc truyền các **array byte** này thông qua mạng đến các **service**. Vì đọc file nhị phân
+hay deserialize **array byte** sẽ nhanh hơn và tiết kiệm tài nguyên hơn rất nhiều so với **json** nên nó nâng cao tốc độ của **service** của bạn.
+
+Các thư viện giúp bạn làm điều này như : proto, thrift, kryo,... Hoặc các bạn cũng có thể tự tạo cho mình một cách **serialize** dữ liệu bằng cách
+sử dụng **bitwise** và nên tuân theo cách **big-endian (BE) or little-endian (LE)**. Mình cũng đã từng chia sẻ sơ qua về cách này tại **blog** 
+[How to serialize data in java like protobuf](https://demtv.hashnode.dev/how-to-serialize-data-in-java-like-protobuf). Nếu các bạn quan tâm 
+thì vào đọc ủng hộ giúp mình nhé.
+
+Đây là cách mình dùng **bitwise** để **serialize** một số int thành 1-5 bytes thay vì 4 bytes.
+```
+default void writeIntOptimise(int value) {
+        if ((value < 0)) throw new IllegalArgumentException("pack int: " + value);
+        int x;
+        while (true) {
+            x = value & 0x7F;
+            value >>>= 7;
+            if (value != 0) {
+                this.writeByte((byte) (x | 0x80));
+            } else {
+                this.writeByte((byte) x);
+                break;
+            }
+        }
+    }
+```
+Chi tiết các bạn tham khảo code phần serilize này tại link [github](https://github.com/trandem/blog/tree/main/common/src/main/java/blog/serialize/impl/io)
+
 
 ## Bitwise common number
 Tại hệ thống mình làm khi giao tiếp với phần mềm bên thứ 3 họ chỉ chấp nhận số lớn nhất là **int** nhưng **ID** của hệ thống mình là một số **long** vậy nên bọn mình đã
