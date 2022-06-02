@@ -20,7 +20,8 @@ trên càng nhiều dữ liệu trên **heap** thì càng làm tăng tải cho c
 **gc** nên sẽ giảm tải cho thuật toán **gc**.
 
 Bộ nhớ **Off-Heap** trong **Java** là một khái niệm không mới mặc dù nó đã tồn tại rất lâu nhưng hiện tại mình
-chỉ sử dụng nó được khoảng gần 1 năm. Mình sẽ chia sẻ những hiểu biết của mình về bộ nhớ này.
+chỉ sử dụng nó được khoảng gần 1 năm. Tại bài viết này mình sẽ chia sẻ về **off heap** , **zero copy** và các**ứng dụng**
+thực tế mình đã làm.
 
 ## Sự khác biệt của Off-Heap
 Bộ nhớ on-heap trong **Java** đã quá quen thuộc với mọi người. Mọi lập trình viên **Java** đều sử dụng nó hằng
