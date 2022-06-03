@@ -116,6 +116,13 @@ Với sự **support** của **OS** thì các kỹ sư của **Kafka** đã sử
 mà không cần **copy** lên **Application** và cũng giảm tải được số lần **switching context**. Tất nhiên để làm được điều này thì các kỹ sư
 của **Kafka** phải có cách thiết kêt **File** đủ tốt để biết khi gửi sẽ gửi từ **byte** nào đến **byte** nào để dưới **client** có thể hiểu và **deserialize** được
 
+Đọc code [Kafka](https://github.com/apache/kafka) nòi mắt thì mình tìm thấy code **implement** **zero copy** này:
+
+![img_1.png](blog-picture/img_1.png)
+
+Mình cũng đang tìm hiểu cách ghi xuống **File** và cách xóa **Data** của **Kafka** mà code nó to quá chưa nghiên cứu hết được :((.
+Hy vọng sau này tìm được mình sẽ trình bày một bài.
+
 ### Đọc ghi File
 Mặc dù **Zero Copy** mang lại hiệu năng rất cao nhưng mà hầu hết các ứng dụng của chúng ta không phải chỉ dùng để **forward** dữ liệu mà còn thực hiện nhiều 
 **logic** khác. Vậy nên chúng ta sẽ không ứng dụng được nhiều phần **Zero copy** này. Tại đây mình muốn dưới thiệu một kiểu đọc ghi hiệu quả hơn là sủ dụng
