@@ -1,0 +1,24 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="logImpl" value="SLF4J"/>
+        <setting name="cacheEnabled" value="false"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="localCacheScope" value="STATEMENT"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <package name="blog.customer.storage.model.po"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <package name="blog.customer.storage.model.handler"/>
+    </typeHandlers>
+
+    <mappers>
+        <mapper resource="orm/customer.xml"/>
+    </mappers>
+
+</configuration>

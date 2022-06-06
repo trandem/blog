@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="blog.customer.storage.repo.CustomerRepo">
+    <sql id="columns"> ID,CUSTOMER_NAME,AGE,STATUS,VERSION</sql>
+
+    <select id="get" parameterType="long" resultType="Customer">
+        select * from customer where ID=#{id}
+    </select>
+
+    <select id="getAll" resultType="Customer">
+        select * from customer;
+    </select>
+
+
+    <insert id="insert" parameterType="Customer">
+        insert into customer(<include refid="columns"/>) values (#{id},#{customerName},#{age},#{status},#{version})
+    </insert>
+
+    <update id="update" parameterType="Customer">
+        update customer set `CUSTOMER_NAME` =#{customerName} , AGE =#{age} , STATUS = #{status}, VERSION = #{version} where ID = #{id} and VERSION = #{version} -1
+    </update>
+
+
+    <insert id="insertOrUpdates" parameterType="map">
+        insert into customer (<include refid="columns"/>) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.customerName},#{item.age},#{item.status},#{item.version})
+        </foreach>
+        on duplicate key update CUSTOMER_NAME = IF(VALUES(VERSION) > VERSION, VALUES(CUSTOMER_NAME), CUSTOMER_NAME), AGE = IF(VALUES(VERSION) > VERSION,VALUES(AGE),AGE),STATUS = IF(VALUES(VERSION) > VERSION,VALUES(STATUS),STATUS), VERSION=IF(VALUES(VERSION)> VERSION,VALUES(VERSION),VERSION)
+    </insert>
+
+    <select id="findByStatus" parameterType="object" resultType="Customer">
+        select * from customer where STATUS = #{status}
+    </select>
+
+    <select id="iterateCustomer" parameterType="map" resultType="Customer">
+        select * from customer where STATUS = "1"
+        <if test="id != null and inclusive"><![CDATA[ and ID <= #{id}]]></if>
+        <if test="id != null and !inclusive"><![CDATA[ and ID < #{id}]]></if>
+        order by ID desc limit #{step}
+    </select>
+</mapper>

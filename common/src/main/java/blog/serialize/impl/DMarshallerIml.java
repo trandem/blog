@@ -2,10 +2,7 @@ package blog.serialize.impl;
 
 import blog.common.Utils;
 import blog.serialize.base.*;
-import blog.serialize.base.datatype.HashMapSerialize;
-import blog.serialize.base.datatype.IntergerSerialize;
-import blog.serialize.base.datatype.ObjectArraySerialize;
-import blog.serialize.base.datatype.StringSerialize;
+import blog.serialize.base.datatype.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -37,7 +34,7 @@ public class DMarshallerIml implements DMarshaller {
         register(new IntergerSerialize());
         register(new HashMapSerialize<>());
         register(new ObjectArraySerialize());
-
+        register(new ListSerialize<>());
     }
 
     public void register(DSerialize<?> serialize) {

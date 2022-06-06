@@ -21,6 +21,7 @@ public class Master implements Watcher {
     }
 
     public void startZoo() throws IOException {
+        System.out.println("ThreadID start "+ Thread.currentThread().getId());
         zk = new ZooKeeper(hostPort, 1000, this);
     }
 
@@ -33,7 +34,6 @@ public class Master implements Watcher {
     }
 
     AsyncCallback.Create2Callback createMasterCallback = (rc, path, ctx, name, stat) -> {
-        System.out.println(ctx);
         switch (KeeperException.Code.get(rc)) {
             case OK:
                 state = MasterStates.ELECTED;
@@ -108,6 +108,7 @@ public class Master implements Watcher {
 
     @Override
     public void process(WatchedEvent event) {
+        System.out.println("ThreadIDConnect "+ Thread.currentThread().getId());
         if (event.getType() == Event.EventType.None) {
             switch (event.getState()) {
                 case SyncConnected:
