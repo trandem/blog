@@ -1,6 +1,8 @@
 package blog.customer.engine.pipeline;
 
-public interface PipeLine<T> {
+import blog.customer.engine.signal.RequestSignal;
 
-    boolean submit(T t);
+public interface PipeLine {
+
+    boolean submit(RequestSignal t);
 }

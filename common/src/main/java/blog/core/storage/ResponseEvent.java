@@ -7,12 +7,12 @@ import java.util.List;
 public class ResponseEvent<T> implements Event, DMarshallable {
     private long id;
 
-    private List<T> response;
+    private T response;
 
     public ResponseEvent() {
     }
 
-    public ResponseEvent(long id, List<T> response) {
+    public ResponseEvent(long id, T response) {
         this.id = id;
         this.response = response;
     }
@@ -21,11 +21,11 @@ public class ResponseEvent<T> implements Event, DMarshallable {
         this.id = id;
     }
 
-    public List<T> getResponse() {
+    public T getResponse() {
         return response;
     }
 
-    public void setResponse(List<T> response) {
+    public void setResponse(T response) {
         this.response = response;
     }
 

@@ -11,7 +11,7 @@ public interface HaManager extends LifeCycle {
     void delListener(Listener listener);
 
     enum Status {
-        MASTER, SLAVE;
+        MASTER, SLAVE,VOTING;
     }
 
 

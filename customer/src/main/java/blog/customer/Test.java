@@ -32,6 +32,6 @@ public class Test {
 
         //List<CustomerPo> customerPoList = service.getAll();
 
-//        System.out.println(customerPoList);
+        //System.out.println(customerPoList);
     }
 }

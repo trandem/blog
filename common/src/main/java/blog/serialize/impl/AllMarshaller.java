@@ -37,25 +37,25 @@ public class AllMarshaller extends DMarshallerIml {
         register(new ResponseEvent.ResponseInstance());
     }
 
-    public static void main(String[] args) {
-        DMarshaller marshaller = AllMarshaller.DEFAULT;
-
-        ResponseEvent<UserModel> response1 = new ResponseEvent<>();
-        response1.setId(1000);
-        List<UserModel> userModels = new ArrayList<>();
-        userModels.add(new UserModel("demtv",11));
-        userModels.add(new UserModel("demtv2",12));
-        response1.setResponse(userModels);
-
-        DOutput output = new DByteArrayOutput();
-        marshaller.write(response1,output);
-
-        DInput input = new DByteArrayInput(output.toArrayBytes());
-        ResponseEvent<UserModel> response2 = marshaller.read(input);
-
-        System.out.println(response2.getResponse());
-        System.out.println(response2.getId());
-
-
-    }
+//    public static void main(String[] args) {
+//        DMarshaller marshaller = AllMarshaller.DEFAULT;
+//
+//        ResponseEvent<UserModel> response1 = new ResponseEvent<>();
+//        response1.setId(1000);
+//        List<UserModel> userModels = new ArrayList<>();
+//        userModels.add(new UserModel("demtv",11));
+//        userModels.add(new UserModel("demtv2",12));
+//        response1.setResponse(userModels);
+//
+//        DOutput output = new DByteArrayOutput();
+//        marshaller.write(response1,output);
+//
+//        DInput input = new DByteArrayInput(output.toArrayBytes());
+//        ResponseEvent<UserModel> response2 = marshaller.read(input);
+//
+//        System.out.println(response2.getResponse());
+//        System.out.println(response2.getId());
+//
+//
+//    }
 }

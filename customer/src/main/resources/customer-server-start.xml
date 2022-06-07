@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="customer-orm.xml"/>
+
+    <bean id="ha.manager" class="blog.customer.ha.AutoMasterHaManager"/>
+
+    <bean id="customer.db.snapshot" class="blog.customer.storage.CustomerMysqlSnapshot">
+        <property name="step" value="${snapshot.customer.step}"/>
+        <property name="customerService" ref="customer.service"/>
+    </bean>
+
+    <bean id="customer.server" class="blog.customer.CustomerServer">
+        <property name="haManager" ref="ha.manager"/>
+        <property name="customerSnapshot" ref="customer.db.snapshot"/>
+    </bean>
+
+
+</beans>
