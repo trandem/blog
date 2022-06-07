@@ -1,5 +1,6 @@
 package blog.customer.storage.repo;
 
+
 import java.util.List;
 
 public interface RegularRepo<T> {

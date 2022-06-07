@@ -10,7 +10,6 @@ public interface CustomerRepo extends RegularRepo<CustomerPo> {
 
     List<CustomerPo> findByStatus(CustomerStatus status);
 
-
     List<CustomerPo> iterateCustomer(@Param("id") Integer id, @Param("inclusive") boolean inclusive, @Param("step") int step);
 
 }

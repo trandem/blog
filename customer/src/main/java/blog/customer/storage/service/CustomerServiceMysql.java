@@ -34,4 +34,11 @@ public class CustomerServiceMysql implements CustomerService {
     public void insertOrUpdate(List<CustomerPo> customerPos) {
         repo.insertOrUpdates(customerPos);
     }
+
+    @Override
+    public void update(CustomerPo customerPo) {
+        int rs = repo.update(customerPo);
+        if (rs ==1) return;
+        throw new RuntimeException("update fails, optimistic locking");
+    }
 }

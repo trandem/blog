@@ -15,6 +15,8 @@ public interface CustomerService {
 
     void insertOrUpdate(List<CustomerPo> customerPos);
 
+    void update(CustomerPo customerPo);
+
 
 
 }

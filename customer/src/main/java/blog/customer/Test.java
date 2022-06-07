@@ -1,6 +1,5 @@
 package blog.customer;
 
-import blog.customer.storage.model.glosory.CustomerStatus;
 import blog.customer.storage.model.po.CustomerPo;
 import blog.customer.storage.service.CustomerService;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,7 +23,11 @@ public class Test {
             for (CustomerPo po : customerPoList){
                 System.out.println(po);
                 customerId = po.getId();
+                po.setAge((short)44);
+                po.setVersion(po.getVersion()+1);
+                service.update(po);
             }
+
         }
 
         //List<CustomerPo> customerPoList = service.getAll();
