@@ -1,12 +1,8 @@
 package blog.customer.engine.signal;
 
-import blog.customer.engine.request.CustomerRequest;
+import blog.customer.engine.pipeline.request.CustomerRequest;
 
-public interface RequestSignal {
-
-    int shard();
-
-    void setShard(int shard);
+public interface RequestSignal extends Signal {
 
     CustomerRequest getRequest();
 

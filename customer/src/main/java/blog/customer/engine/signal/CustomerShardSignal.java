@@ -1,28 +1,29 @@
 package blog.customer.engine.signal;
 
-import blog.customer.engine.request.CustomerRequest;
+import blog.customer.engine.pipeline.Shard;
+import blog.customer.engine.pipeline.request.CustomerRequest;
 
 public class CustomerShardSignal implements RequestSignal {
 
-    private int shard;
+    private Shard shard;
     private CustomerRequest request;
 
 
     public CustomerShardSignal() {
     }
 
-    public CustomerShardSignal(int shard, CustomerRequest request) {
+    public CustomerShardSignal(Shard shard, CustomerRequest request) {
         this.shard = shard;
         this.request = request;
     }
 
     @Override
-    public int shard() {
+    public Shard shard() {
         return shard;
     }
 
     @Override
-    public void setShard(int shard) {
+    public void setShard(Shard shard) {
         this.shard = shard;
     }
 

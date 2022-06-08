@@ -1,8 +1,8 @@
 package blog.customer.engine.pipeline;
 
-import blog.customer.engine.signal.RequestSignal;
+import blog.common.glosory.LifeCycle;
 
-public interface PipeLine {
+public interface PipeLine<T> extends LifeCycle {
 
-    boolean submit(RequestSignal t);
+    boolean submit(T t);
 }
