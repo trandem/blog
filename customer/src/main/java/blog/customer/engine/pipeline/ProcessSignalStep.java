@@ -28,9 +28,7 @@ public class ProcessSignalStep extends ReferenceLifeCycle implements RequestSign
 
     @Override
     public void process(RequestSignal[] signals, int count) {
-        for (int i = 0; i < count; i++) {
 
-        }
     }
 
     @Override

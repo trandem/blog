@@ -5,6 +5,6 @@ import blog.customer.engine.pipeline.response.Response;
 
 public interface Action<Req extends Request, Res extends Response> {
 
-    Req doAction(Req req);
+    Res doAction(Req req);
 
 }

@@ -1,5 +1,6 @@
 package blog.customer.engine.signal;
 
+import blog.customer.engine.pipeline.RequestSignalStep;
 import blog.customer.engine.pipeline.Shard;
 import blog.customer.engine.pipeline.request.CustomerRequest;
 

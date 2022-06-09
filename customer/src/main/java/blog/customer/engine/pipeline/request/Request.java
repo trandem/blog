@@ -4,5 +4,5 @@ public interface Request {
 
     long getId();
 
-    long setId(long id);
+    void setId(long id);
 }

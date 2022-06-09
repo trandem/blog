@@ -5,6 +5,7 @@ public enum CustomerRequestType {
     CREATE,
     UPDATE,
     DELETE,
-    GET_CUSTOMER;
+    GET_CUSTOMER,
+    REPLICATE;
 
 }
