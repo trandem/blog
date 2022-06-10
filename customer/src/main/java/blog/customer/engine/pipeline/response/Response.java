@@ -1,9 +1,14 @@
 package blog.customer.engine.pipeline.response;
 
 public interface Response {
+
+    long getRequestId();
+
+    void setRequestId(long requestId);
+
     long getId();
 
-    long setId(long id);
+    void setId(long id);
 
     Result getResult();
 

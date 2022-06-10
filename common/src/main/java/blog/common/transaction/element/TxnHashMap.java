@@ -34,14 +34,14 @@ public class TxnHashMap<K, V> implements TxnElement {
         return cookies.get(k);
     }
 
-    public boolean contain(K k) {
+    public boolean containKey(K k) {
         boolean isExist = value.containsKey(k);
-        if (isExist) return true;
+        if (isExist) return false;
         Map<K, V> cookies = getCookies(false);
         if (cookies == null) {
-            return false;
+            return true;
         }
-        return cookies.containsKey(k);
+        return !cookies.containsKey(k);
     }
 
 

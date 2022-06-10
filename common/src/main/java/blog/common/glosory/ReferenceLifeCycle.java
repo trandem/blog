@@ -1,7 +1,6 @@
 package blog.common.glosory;
 
 import blog.common.concurrent.XFuture;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

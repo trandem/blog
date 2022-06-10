@@ -8,6 +8,7 @@ tìm được một cách hay ho có thể sử dụng lại thì tôi quết đ
 
 ## Cài đặt transaction in memory
 Ta sẽ chú ý ví dụ lưu các sản phẩm khách hàng mua thành công trên RAM sau :
+
 ```java
 
 import blog.common.transaction.element.TxnHashMap;
@@ -24,7 +25,7 @@ public class TestTransaction {
     }
 
     private void buySuccess(String userName, String productName) {
-        if (!userData.contain(userName)) {
+        if (userData.containKey(userName)) {
             userData.put(userName, new ArrayList<>());
         }
         userData.get(userName).add(productName);
@@ -49,11 +50,11 @@ public class TestTransaction {
         TxnManager manager = new TxnManager();
 
         manager.executeTransaction(() -> {
-            test.buySuccess("demtv","iphone");
-            test.buySuccess("demtv","ipad");
-            test.buySuccess("maitv","ipad");
-            manager.executeTransaction(()->{
-                test.buySuccess("maitv","ipad");
+            test.buySuccess("demtv", "iphone");
+            test.buySuccess("demtv", "ipad");
+            test.buySuccess("maitv", "ipad");
+            manager.executeTransaction(() -> {
+                test.buySuccess("maitv", "ipad");
                 test.buyFail();
                 return null;
             });
@@ -61,7 +62,7 @@ public class TestTransaction {
         });
 
         manager.executeTransaction(() -> {
-            test.buySuccess("maipm","iphone");
+            test.buySuccess("maipm", "iphone");
             test.buyFail();
             return null;
         });

@@ -13,6 +13,11 @@ public class UpdateCustomerRequest extends AbstractCustomerSharableRequest {
         this.customerPo = customerPo;
     }
 
+    public CustomerPo getCustomerPo() {
+        return customerPo;
+    }
+
+
     @Override
     public CustomerRequestType getRequestType() {
         return CustomerRequestType.UPDATE;

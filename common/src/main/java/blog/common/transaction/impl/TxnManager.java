@@ -24,7 +24,7 @@ public class TxnManager {
 
         } catch (Exception e) {
             transactionBase.rollback();
-            return null;
+            throw e;
         } finally {
             STX.set(info.getPrevious());
         }

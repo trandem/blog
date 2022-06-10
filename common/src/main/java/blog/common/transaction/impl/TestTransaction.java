@@ -15,7 +15,7 @@ public class TestTransaction {
     }
 
     private void buySuccess(String userName, String productName) {
-        if (!userData.contain(userName)) {
+        if (userData.containKey(userName)) {
             userData.put(userName, new ArrayList<>());
         }
         userData.get(userName).add(productName);
