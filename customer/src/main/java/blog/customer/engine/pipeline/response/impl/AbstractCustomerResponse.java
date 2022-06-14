@@ -5,9 +5,9 @@ import blog.customer.engine.pipeline.response.CustomerResponseResult;
 
 public class AbstractCustomerResponse implements CustomerResponse {
 
-    private CustomerResponseResult result;
-    private long id;
-    private long requestId;
+    protected CustomerResponseResult result;
+    protected long id;
+    protected long requestId;
 
     public AbstractCustomerResponse() {
     }

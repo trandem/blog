@@ -16,7 +16,6 @@ public class CustomerFactoryManagerImpl implements CustomerFactoryManager {
     }
 
     private void initFactory() {
-
         map.put(CustomerRequestType.GET_CUSTOMER, new QueryCustomerResponse.QueryCustomerResponseFactory());
         map.put(CustomerRequestType.CREATE, new CreateCustomerResponse.CreateCustomerFactory());
         map.put(CustomerRequestType.UPDATE, new UpdateCustomerResponse.UpdateCustomerResponseFactory());

@@ -25,4 +25,6 @@ public class ReplicateCustomerRequest extends AbstractCustomerSharableRequest {
     public CustomerRequestType getRequestType() {
         return CustomerRequestType.REPLICATE;
     }
+
+
 }

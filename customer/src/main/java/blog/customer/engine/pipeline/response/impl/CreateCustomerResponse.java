@@ -23,6 +23,16 @@ public class CreateCustomerResponse extends AbstractCustomerResponse {
         this.po = po;
     }
 
+    @Override
+    public String toString() {
+        return "CreateCustomerResponse{" +
+                "result=" + result +
+                ", id=" + id +
+                ", requestId=" + requestId +
+                ", po=" + po +
+                '}';
+    }
+
     public static class CreateCustomerFactory implements CustomerResponse.CustomerFactory{
 
         @Override

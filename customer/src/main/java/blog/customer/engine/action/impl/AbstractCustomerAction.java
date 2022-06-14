@@ -15,7 +15,7 @@ public abstract class AbstractCustomerAction<Req extends CustomerRequest, Res ex
 
     protected CustomerEntityManager entityManager;
 
-    private TxnManager manager;
+    private TxnManager tracsactionManager;
 
     protected  Res doActionTransaction(Req req) {
         throw new RuntimeException("not implement");
@@ -24,7 +24,7 @@ public abstract class AbstractCustomerAction<Req extends CustomerRequest, Res ex
     @Override
     public CustomerResponse doAction(CustomerRequest customerRequest) {
         if (customerRequest instanceof CustomerSharableRequest) {
-            return manager.executeTransaction(() -> doActionTransaction((Req) customerRequest), DPropagation.REQUIRES_NEW);
+            return tracsactionManager.executeTransaction(() -> doActionTransaction((Req) customerRequest), DPropagation.REQUIRES_NEW);
         } else {
             throw new RuntimeException("not implement yet");
         }
@@ -46,11 +46,11 @@ public abstract class AbstractCustomerAction<Req extends CustomerRequest, Res ex
         this.entityManager = entityManager;
     }
 
-    public TxnManager getManager() {
-        return manager;
+    public TxnManager getTracsactionManager() {
+        return tracsactionManager;
     }
 
-    public void setManager(TxnManager manager) {
-        this.manager = manager;
+    public void setTracsactionManager(TxnManager tracsactionManager) {
+        this.tracsactionManager = tracsactionManager;
     }
 }

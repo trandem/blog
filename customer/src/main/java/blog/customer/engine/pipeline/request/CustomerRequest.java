@@ -1,5 +1,6 @@
 package blog.customer.engine.pipeline.request;
 
-public interface CustomerRequest extends Request{
+public interface CustomerRequest extends Request {
     CustomerRequestType getRequestType();
+
 }

@@ -64,5 +64,6 @@ public class ListenableFuture<T> implements DFuture<T> {
         this.throwable = throwable;
         this.isDone = true;
         this.countDownLatch.countDown();
+        if (listener != null) listener.onComplete(this);
     }
 }

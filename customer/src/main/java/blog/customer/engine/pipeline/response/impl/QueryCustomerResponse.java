@@ -24,6 +24,17 @@ public class QueryCustomerResponse extends AbstractCustomerResponse {
         this.customerPo = customerPo;
     }
 
+
+    @Override
+    public String toString() {
+        return "QueryCustomerResponse{" +
+                "result=" + result +
+                ", id=" + id +
+                ", requestId=" + requestId +
+                ", customerPo=" + customerPo +
+                '}';
+    }
+
     public static class QueryCustomerResponseFactory implements CustomerResponse.CustomerFactory{
 
         @Override

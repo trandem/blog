@@ -12,10 +12,25 @@
         <property name="customerService" ref="customer.service"/>
     </bean>
 
+    <bean id="customer.shard.manager" class="blog.customer.engine.signal.CustomerShardManagerIml">
+        <constructor-arg value="2"/>
+    </bean>
+
     <bean id="customer.server" class="blog.customer.CustomerServer">
         <property name="haManager" ref="ha.manager"/>
         <property name="customerSnapshot" ref="customer.db.snapshot"/>
+        <property name="requestPipeline" ref="request.pipeline"/>
+        <property name="customerShardManager" ref="customer.shard.manager"/>
     </bean>
 
+    <bean id="request.pipeline" class="blog.customer.engine.pipeline.ProcessPipeline">
+        <constructor-arg value="blog.customer.engine.signal.RequestSignal"/>
+        <property name="shardManager" ref="customer.shard.manager"/>
+        <property name="stepFactory" ref="process.step.factory"/>
+    </bean>
+
+    <bean id="process.step.factory" class="blog.customer.engine.pipeline.ProcessSignalStep.ProcessSignalStepFactory">
+        <property name="batch" value="10"/>
+    </bean>
 
 </beans>

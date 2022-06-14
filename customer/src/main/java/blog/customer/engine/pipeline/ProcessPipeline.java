@@ -62,7 +62,7 @@ public class ProcessPipeline<T extends Signal> extends ReferenceLifeCycle implem
         return 0;
     }
 
-    public void setStepFactory(RequestSignalStep.factory stepFactory) {
+    public void setStepFactory(RequestSignalStep.factory<T> stepFactory) {
         this.stepFactory = stepFactory;
     }
 
@@ -91,9 +91,8 @@ public class ProcessPipeline<T extends Signal> extends ReferenceLifeCycle implem
         @Override
         public void run() {
             while (!isRunning()) Thread.yield();
-
-            @SuppressWarnings("unchecked")
-            final T works[] = (T[]) Array.newInstance(clazz, step.getBatch());
+            step.start();
+            @SuppressWarnings("unchecked") final T[] works = (T[]) Array.newInstance(clazz, step.getBatch());
 
             while (!isStop) {
                 int count = 0;
@@ -111,7 +110,7 @@ public class ProcessPipeline<T extends Signal> extends ReferenceLifeCycle implem
                 } catch (Throwable th) {
                     th.printStackTrace();
                 } finally {
-                    System.out.println("proceed");
+                    //System.out.println("proceed");
                 }
             }
         }

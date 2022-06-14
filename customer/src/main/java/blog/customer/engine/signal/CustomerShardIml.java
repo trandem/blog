@@ -7,6 +7,9 @@ import java.util.Objects;
 public class CustomerShardIml implements Shard {
     private int shardId;
 
+    public CustomerShardIml(int shardId) {
+        this.shardId = shardId;
+    }
 
     @Override
     public int getId() {
