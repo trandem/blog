@@ -11,7 +11,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Test {
-
     protected final ReentrantLock lock = new ReentrantLock(false);
     protected final Condition notEmpty = this.lock.newCondition();
     private boolean isDone = false;
@@ -30,6 +29,7 @@ public class Test {
             lock.unlock();
         }
     }
+
 
     public static void main(String[] args) throws InterruptedException, IOException {
         RandomAccessFile randomAccess = new RandomAccessFile(new File("dev"),"rwd");
