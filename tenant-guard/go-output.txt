@@ -1,0 +1,60 @@
+bang co tenant_id: [customers orders]
+
+=== [1] db.Find(&cs), quen dieu kien tenant
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND
+
+=== [2] db.Where("tenant_id = ?", 1).Find(&cs)
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+
+=== [3] db.First(&c, 3): doc khach hang theo id, khong co tenant
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND
+
+=== [4] db.Model(&Customer{}).Where("id = ?", 3).Update(...)
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND
+
+=== [5] db.Raw: WHERE tenant_id = ? OR 1 = 1
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND
+
+=== [6] LEFT JOIN dat dieu kien tenant nham bang
+ERROR: tenant guard: table orders (alias o) has no o.tenant_id = ? in top-level AND
+
+=== [6b] cung cau do, chay bang connection khong co guard
+order 1 | amount 500 | customer Khach A1
+order 2 | amount 50 | customer Khach A2
+order 3 | amount 700 | customer NULL
+order 4 | amount 70 | customer NULL
+
+=== [7] subquery tinh tong doanh thu khong loc tenant
+ERROR: tenant guard: table orders (alias orders) has no orders.tenant_id = ? in top-level AND
+
+=== [8] cau JOIN da them o.tenant_id = ?
+order 1 | amount 500 | customer Khach A1
+order 2 | amount 50 | customer Khach A2
+
+=== [9] cau chay trong transaction
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND
+
+=== [10] Preload: GORM tu sinh cau doc orders
+ERROR: tenant guard: table orders (alias orders) has no orders.tenant_id = ? in top-level AND
+
+=== [10b] Preload kem dieu kien tenant
+Khach A1: 1 order
+Khach A2: 1 order
+
+=== [11] bang dung chung countries
+so country: 2
+
+=== [12] WithoutTenantCheck cho job xuyen tenant
+tenant guard: bypass: SELECT * FROM `customers`
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+tenant 2 | Khach B1
+tenant 2 | Khach B2
+
+=== [13] che do LogOnly
+tenant guard (log only): tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+tenant 2 | Khach B1
+tenant 2 | Khach B2

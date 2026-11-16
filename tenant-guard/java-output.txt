@@ -1,0 +1,60 @@
+bang co tenant_id: [orders, customers]
+
+=== [1] HQL: from Customer, quen dieu kien tenant
+ERROR: tenant guard: table customers (alias c1_0) has no c1_0.tenant_id = ? in top-level AND | sql: select c1_0.id,c1_0.name,c1_0.owner_id,c1_0.tenant_id from customers c1_0
+
+=== [2] HQL: from Customer c where c.tenantId = :t
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+
+=== [3] session.find(Customer.class, 3L)
+ERROR: tenant guard: table customers (alias c1_0) has no c1_0.tenant_id = ? in top-level AND | sql: select c1_0.id,c1_0.name,c1_0.owner_id,c1_0.tenant_id from customers c1_0 where c1_0.id=?
+
+=== [4] HQL update theo id
+ERROR: tenant guard: table customers (alias c1_0) has no c1_0.tenant_id = ? in top-level AND | sql: update customers c1_0 set name=? where c1_0.id=?
+
+=== [5] native query: WHERE tenant_id = ? OR 1 = 1
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND | sql: select * from customers where tenant_id = ? or 1 = 1
+
+=== [6] HQL LEFT JOIN dat dieu kien tenant nham bang
+ERROR: tenant guard: table orders (alias o1_0) has no o1_0.tenant_id = ? in top-level AND | sql: select o1_0.id,o1_0.amount,c1_0.name from orders o1_0 left join customers c1_0 on c1_0.id=o1_0.customer_id and c1_0.tenant_id=?
+
+=== [7] HQL JOIN da them o.tenantId = :t
+order 1 | amount 500 | customer Khach A1
+order 2 | amount 50 | customer Khach A2
+
+=== [8] lazy load: order.customer.name
+ERROR: tenant guard: table customers (alias c1_0) has no c1_0.tenant_id = ? in top-level AND | sql: select c1_0.id,c1_0.name,c1_0.owner_id,c1_0.tenant_id from customers c1_0 where c1_0.id=?
+
+=== [9] bang dung chung countries
+so country: 2
+
+=== [10] withoutTenantCheck cho job xuyen tenant
+tenant guard: bypass: select c1_0.id,c1_0.name,c1_0.owner_id,c1_0.tenant_id from customers c1_0
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+tenant 2 | Khach B1
+tenant 2 | Khach B2
+
+=== [11] @TenantId: from TCustomer, session cua tenant 1
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+
+=== [12] @TenantId: session.find(TCustomer.class, 3L)
+sql: select t1_0.id,t1_0.name,t1_0.owner_id,t1_0.tenant_id from customers t1_0 where t1_0.id=? and t1_0.tenant_id = ?
+find tra ve null
+
+=== [13] @TenantId: lazy load order.customer.name
+sql: select t1_0.id,t1_0.amount,t1_0.customer_id,t1_0.tenant_id from orders t1_0 where t1_0.tenant_id = ? and t1_0.id=1
+sql: select t1_0.id,t1_0.name,t1_0.owner_id,t1_0.tenant_id from customers t1_0 where t1_0.id=? and t1_0.tenant_id = ?
+customer cua order 1: Khach A1
+
+=== [14] @TenantId: native query khong co tenant
+ERROR: tenant guard: table customers (alias customers) has no customers.tenant_id = ? in top-level AND | sql: select * from customers
+
+=== [15] che do LOG_ONLY
+tenant guard (log only): table customers (alias c1_0) has no c1_0.tenant_id = ? in top-level AND | sql: select c1_0.id,c1_0.name,c1_0.owner_id,c1_0.tenant_id from customers c1_0
+tenant 1 | Khach A1
+tenant 1 | Khach A2
+tenant 2 | Khach B1
+tenant 2 | Khach B2
