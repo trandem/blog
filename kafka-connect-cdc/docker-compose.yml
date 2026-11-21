@@ -1,0 +1,81 @@
+# Lab cho bo bai Kafka Connect va CDC. Cach chay: xem README.md.
+# Khong mo cong nao ra host va khong mount thu muc: moi lenh chay qua `docker compose exec`,
+# file SQL va file JSON cua connector day vao container qua stdin.
+services:
+  kafka:
+    image: apache/kafka:4.3.1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 5s
+      timeout: 20s
+      retries: 30
+
+  # MySQL nguon: binlog ROW (mac dinh cua 8.0), GTID bat de connector biet chinh xac
+  # transaction nao da doc, server-id rieng vi connector se dong vai mot replica.
+  mysql:
+    image: mysql:8.0.41
+    command:
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --binlog-row-image=FULL
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"]
+      interval: 3s
+      retries: 60
+
+  # PostgreSQL dich cho sink connector.
+  postgres:
+    image: postgres:16.14
+    environment:
+      POSTGRES_USER: replica
+      POSTGRES_PASSWORD: replica
+      POSTGRES_DB: replica
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U replica -d replica"]
+      interval: 3s
+      retries: 30
+
+  # Mot worker Kafka Connect o che do distributed. Image cua Debezium da kem san
+  # connector MySQL, PostgreSQL va JDBC sink.
+  connect:
+    image: quay.io/debezium/connect:3.6.3.Final
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: connect-cluster
+      CONFIG_STORAGE_TOPIC: connect-configs
+      OFFSET_STORAGE_TOPIC: connect-offsets
+      STATUS_STORAGE_TOPIC: connect-status
+      # Mac dinh 60 giay. Lab ha xuong 5 giay de thay offset cap nhat nhanh.
+      OFFSET_FLUSH_INTERVAL_MS: 5000
+      HEAP_OPTS: "-Xms256m -Xmx768m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8083/connectors > /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
