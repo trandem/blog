@@ -1,0 +1,18 @@
+{
+  "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+  "tasks.max": "1",
+  "database.hostname": "mysql",
+  "database.port": "3306",
+  "database.user": "debezium",
+  "database.password": "dbz",
+  "database.server.id": "184073",
+  "topic.prefix": "warn",
+  "database.include.list": "shop",
+  "table.include.list": "shop.products",
+  "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+  "schema.history.internal.kafka.topic": "schema-history.warn",
+  "schema.history.internal.store.only.captured.tables.ddl": "true",
+  "signal.data.collection": "shop.debezium_signal",
+  "snapshot.mode": "initial",
+  "inconsistent.schema.handling.mode": "warn"
+}
