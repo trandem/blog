@@ -1,0 +1,17 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "tasks.max": "1",
+  "database.hostname": "pgsrc",
+  "database.port": "5432",
+  "database.user": "src",
+  "database.password": "src",
+  "database.dbname": "shop",
+  "plugin.name": "pgoutput",
+  "slot.name": "dbz_slot_filtered",
+  "publication.name": "dbz_pub_filtered",
+  "publication.autocreate.mode": "filtered",
+  "topic.prefix": "pgf",
+  "table.include.list": "public.products,public.heartbeat",
+  "heartbeat.interval.ms": "5000",
+  "heartbeat.action.query": "INSERT INTO public.heartbeat (id, ts) VALUES (1, now()) ON CONFLICT (id) DO UPDATE SET ts = EXCLUDED.ts"
+}

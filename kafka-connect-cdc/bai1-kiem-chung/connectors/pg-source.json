@@ -1,0 +1,13 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "tasks.max": "1",
+  "database.hostname": "pgsrc",
+  "database.port": "5432",
+  "database.user": "src",
+  "database.password": "src",
+  "database.dbname": "shop",
+  "plugin.name": "pgoutput",
+  "slot.name": "dbz_slot",
+  "topic.prefix": "pg",
+  "table.include.list": "public.products"
+}
