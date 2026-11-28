@@ -206,7 +206,7 @@ Thiết kế mới thay topic trigger bằng một cronjob trong Report Service,
 
 **Về Stored Procedure:** Mình không khuyến khích đặt logic nghiệp vụ trong Stored Procedure, vì logic nằm trong database thì khó test, khó review và không deploy cùng code ứng dụng. Tuy nhiên hệ thống này đang vận hành bằng Stored Procedure, nên thiết kế mới giữ nguyên phần tính số liệu đó và chỉ sửa phần điều phối xung quanh.
 
-Report Service chạy nhiều instance thì instance nào cũng chạy cronjob, nên câu đầu tiên của transaction là `pg_try_advisory_xact_lock`. Instance lấy được lock thì chạy, các instance khác nhận `false` và bỏ qua lượt này. Lock dạng `xact` tự nhả khi transaction kết thúc, nên dùng qua connection pool vẫn an toàn. Cách advisory lock hoạt động và bẫy khi đi qua connection pool nằm ở bài [Bốn cách triển khai pessimistic lock: lock sống ở đâu, ai nhả khi process chết](https://zemitprivate.substack.com/p/bon-cach-trien-khai-pessimistic-lock).
+Report Service chạy nhiều instance thì instance nào cũng chạy cronjob, nên câu đầu tiên của transaction là `pg_try_advisory_xact_lock`. Instance lấy được lock thì chạy, các instance khác nhận `false` và bỏ qua lượt này. Lock dạng `xact` tự nhả khi transaction kết thúc, nên dùng qua connection pool vẫn an toàn. Cách advisory lock hoạt động và bẫy khi đi qua connection pool nằm ở bài [Bốn cách triển khai pessimistic lock: lock sống ở đâu, ai nhả khi process chết](https://zemitprivate.substack.com/p/bon-cach-trien-khai-pessimistic-lock) (dành cho hội viên trả phí).
 
 Crash hoặc Stored Procedure lỗi giữa chừng thì transaction rollback cả cụm: không có batch, không có job mồ côi, và lượt chạy 10 phút sau tự làm lại từ đầu. Batch chỉ xuất hiện khi đã đủ job, nên bỏ được cột `total_customers`, và bảng `batch_job` không cần claim, heartbeat hay reaper riêng. Ràng buộc `UNIQUE (trade_date)` giữ vai lưới an toàn phía sau lock.
 
@@ -215,13 +215,13 @@ Stored Procedure lỗi do dữ liệu thì lượt nào cũng lỗi, nên cần 
 Nếu trigger bắt buộc phải đến từ hệ thống khác qua Kafka, phía Kafka chỉ cần ghi một dòng yêu cầu chạy vào `batch_job` (trạng thái `PENDING`, `ON CONFLICT (trade_date) DO NOTHING`), và cronjob nhận dòng `PENDING` này thay vì tự xét ngày cần chạy. Có hai cách ghi dòng này mà không tạo ghi kép:
 
 - **Consumer nhỏ:** Consumer chỉ chạy câu `INSERT ... ON CONFLICT`, commit rồi mới ACK. Crash trước khi ACK thì Kafka giao lại message và `ON CONFLICT` bỏ qua lần ghi thứ hai.
-- **Kafka Connect:** Nếu team đã vận hành sẵn cụm Kafka Connect thì JDBC sink connector ở chế độ upsert làm được việc này mà không cần viết code, miễn record chỉ mang khóa `trade_date` để connector sinh `ON CONFLICT DO NOTHING` (các cột khác lấy giá trị mặc định). Cách sink connector ghi từ topic xuống database nằm ở bài [CDC và Kafka Connect từ bên trong: từ binlog lên topic, từ topic về database](https://zemitprivate.substack.com/p/cdc-va-kafka-connect-tu-ben-trong).
+- **Kafka Connect:** Nếu team đã vận hành sẵn cụm Kafka Connect thì JDBC sink connector ở chế độ upsert làm được việc này mà không cần viết code, miễn record chỉ mang khóa `trade_date` để connector sinh `ON CONFLICT DO NOTHING` (các cột khác lấy giá trị mặc định). Cách sink connector ghi từ topic xuống database nằm ở bài [CDC và Kafka Connect từ bên trong: từ binlog lên topic, từ topic về database](https://zemitprivate.substack.com/p/cdc-va-kafka-connect-tu-ben-trong) (dành cho hội viên trả phí).
 
 ### 5.2 PDF job: một job cho một khách hàng
 
 Đơn vị thành công của nghiệp vụ là khách hàng, nên đơn vị job cũng là khách hàng. Một job render đủ các tiểu khoản của một khách rồi ghi kết quả một lần. Bước gom theo khách lúc đó chỉ là chờ đủ file trong bộ nhớ của worker, nên topic worker và toàn bộ counter đều bỏ được, và `sub_account_task` thôi tham gia điều phối.
 
-Bảng `customer_task` dùng bộ cột của bảng jobs trong bài [Từ sync sang async: bản thiết kế cho import, export và mọi tác vụ chạy lâu](https://zemitprivate.substack.com/p/tu-sync-sang-async-blueprint-cho): `locked_by` (token sinh mới mỗi lần claim), `attempts`, `heartbeat_at` (lần cuối worker báo còn sống), `next_run_at`. Worker claim job bằng `SKIP LOCKED` trong một transaction ngắn, render chạy ngoài transaction:
+Bảng `customer_task` dùng bộ cột của bảng jobs trong bài [Từ sync sang async: bản thiết kế cho import, export và mọi tác vụ chạy lâu](https://zemitprivate.substack.com/p/tu-sync-sang-async-blueprint-cho) (dành cho hội viên trả phí): `locked_by` (token sinh mới mỗi lần claim), `attempts`, `heartbeat_at` (lần cuối worker báo còn sống), `next_run_at`. Worker claim job bằng `SKIP LOCKED` trong một transaction ngắn, render chạy ngoài transaction:
 
 ```sql
 WITH next_job AS (
@@ -262,7 +262,7 @@ COMMIT;
 
 Điều kiện `locked_by = :token` chặn đúng ca hai worker cùng xử lý một job như trong sơ đồ email thiếu file. Worker cũ ngừng heartbeat quá lâu (treo hoặc mất kết nối database) thì bị thu hồi job, worker khác claim lại với token mới, nên lúc worker cũ ghi nhận thì câu `UPDATE` cập nhật được 0 dòng và kết quả bị bỏ.
 
-Nguyên lý này giống nhả Redis lock: trước khi xóa lock phải kiểm tra người giữ, nếu không thì xóa nhầm lock của người khác. Phần lock column, Redis lock có TTL và `SKIP LOCKED` cho hàng đợi job nằm ở bài [Bốn cách triển khai pessimistic lock: lock sống ở đâu, ai nhả khi process chết](https://zemitprivate.substack.com/p/bon-cach-trien-khai-pessimistic-lock).
+Nguyên lý này giống nhả Redis lock: trước khi xóa lock phải kiểm tra người giữ, nếu không thì xóa nhầm lock của người khác. Phần lock column, Redis lock có TTL và `SKIP LOCKED` cho hàng đợi job nằm ở bài [Bốn cách triển khai pessimistic lock: lock sống ở đâu, ai nhả khi process chết](https://zemitprivate.substack.com/p/bon-cach-trien-khai-pessimistic-lock) (dành cho hội viên trả phí).
 
 Render lỗi thì job về `PENDING` kèm backoff (đặt `next_run_at` lùi về sau) nếu còn lượt, hết lượt thì `FAILED`. Một tiểu khoản lỗi làm cả job lỗi, đúng luật nghiệp vụ. Render lại cả khách chỉ tốn thêm tối đa 2 file.
 
